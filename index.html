@@ -393,6 +393,8 @@
         const triggers = document.querySelectorAll('.tooltip-trigger');
         let currentRequest = null;
         let hideTimeout = null;
+        let currentTrigger = null;
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
         async function fetchWikipediaContent(title) {
             const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
@@ -446,85 +448,121 @@
             return positionedAbove;
         }
 
-        triggers.forEach(trigger => {
-            trigger.addEventListener('mouseenter', async function(e) {
-                // Clear any pending hide timeout
-                if (hideTimeout) {
-                    clearTimeout(hideTimeout);
-                    hideTimeout = null;
-                }
-                
-                const customType = this.getAttribute('data-custom');
-                const rect = this.getBoundingClientRect();
-                
-                // Check if this is a custom tooltip
-                if (customType === 'linkedin') {
-                    tooltip.innerHTML = `
-                        <div class="linkedin-card">
-                            <img src="avatar.png" alt="Chris Appleton">
-                            <h3>Chris Appleton</h3>
-                            <p class="role">Senior Product Designer at Shopify</p>
-                            <div class="social-buttons">
-                                <a href="https://www.linkedin.com/in/chappleton/" target="_blank" class="cta linkedin">LinkedIn</a>
-                                <a href="https://twitter.com/chris_appleton" target="_blank" class="cta twitter">Twitter</a>
-                            </div>
-                        </div>
-                    `;
-                    tooltip.classList.add('visible');
-                    positionTooltip(tooltip, rect);
-                    return;
-                }
-                
-                const wikiTitle = this.getAttribute('data-wiki');
-                
-                // Show loading state first
-                tooltip.innerHTML = '<p class="loading">Loading...</p>';
-                tooltip.classList.add('visible');
-                
-                // Initial positioning
-                positionTooltip(tooltip, rect);
-                
-                // Fetch content
-                const content = await fetchWikipediaContent(wikiTitle);
-                
-                if (content) {
-                    const imageHtml = content.thumbnail ? `<img src="${content.thumbnail}" alt="${content.title}">` : '';
-                    tooltip.innerHTML = `
-                        ${imageHtml}
-                        <h3>${content.title}</h3>
-                        <p>${content.extract}</p>
-                        <a href="${content.url}" target="_blank">Read more on Wikipedia →</a>
-                    `;
-                    
-                    // Reposition after content loads (when we know the real height)
-                    setTimeout(() => {
-                        positionTooltip(tooltip, rect);
-                    }, 10);
-                } else {
-                    tooltip.innerHTML = '<p>Could not load content.</p>';
-                }
-            });
-
-            trigger.addEventListener('mouseleave', function() {
-                // Delay hiding to allow moving to tooltip
-                hideTimeout = setTimeout(() => {
-                    tooltip.classList.remove('visible');
-                }, 200);
-            });
-        });
-
-        tooltip.addEventListener('mouseenter', function() {
-            // Clear hide timeout when entering tooltip
+        async function showTooltipForTrigger(trigger) {
+            // Clear any pending hide timeout
             if (hideTimeout) {
                 clearTimeout(hideTimeout);
                 hideTimeout = null;
             }
-            this.classList.add('visible');
+            
+            currentTrigger = trigger;
+            const customType = trigger.getAttribute('data-custom');
+            const rect = trigger.getBoundingClientRect();
+            
+            // Check if this is a custom tooltip
+            if (customType === 'linkedin') {
+                tooltip.innerHTML = `
+                    <div class="linkedin-card">
+                        <img src="avatar.png" alt="Chris Appleton">
+                        <h3>Chris Appleton</h3>
+                        <p class="role">Senior Product Designer at Shopify</p>
+                        <div class="social-buttons">
+                            <a href="https://www.linkedin.com/in/chappleton/" target="_blank" class="cta linkedin">LinkedIn</a>
+                            <a href="https://twitter.com/chris_appleton" target="_blank" class="cta twitter">Twitter</a>
+                        </div>
+                    </div>
+                `;
+                tooltip.classList.add('visible');
+                positionTooltip(tooltip, rect);
+                return;
+            }
+            
+            const wikiTitle = trigger.getAttribute('data-wiki');
+            
+            // Show loading state first
+            tooltip.innerHTML = '<p class="loading">Loading...</p>';
+            tooltip.classList.add('visible');
+            
+            // Initial positioning
+            positionTooltip(tooltip, rect);
+            
+            // Fetch content
+            const content = await fetchWikipediaContent(wikiTitle);
+            
+            if (content) {
+                const imageHtml = content.thumbnail ? `<img src="${content.thumbnail}" alt="${content.title}">` : '';
+                tooltip.innerHTML = `
+                    ${imageHtml}
+                    <h3>${content.title}</h3>
+                    <p>${content.extract}</p>
+                    <a href="${content.url}" target="_blank">Read more on Wikipedia →</a>
+                `;
+                
+                // Reposition after content loads (when we know the real height)
+                setTimeout(() => {
+                    positionTooltip(tooltip, rect);
+                }, 10);
+            } else {
+                tooltip.innerHTML = '<p>Could not load content.</p>';
+            }
+        }
+
+        triggers.forEach(trigger => {
+            // Click/tap handler for mobile and desktop
+            trigger.addEventListener('click', function(e) {
+                // If tooltip is already visible for this trigger, hide it
+                if (tooltip.classList.contains('visible') && currentTrigger === this) {
+                    tooltip.classList.remove('visible');
+                    currentTrigger = null;
+                } else {
+                    // Show tooltip
+                    e.preventDefault();
+                    showTooltipForTrigger(this);
+                }
+            });
+
+            // Hover handlers for desktop only
+            if (!isTouchDevice) {
+                trigger.addEventListener('mouseenter', function() {
+                    showTooltipForTrigger(this);
+                });
+
+                trigger.addEventListener('mouseleave', function() {
+                    // Delay hiding to allow moving to tooltip
+                    hideTimeout = setTimeout(() => {
+                        tooltip.classList.remove('visible');
+                        currentTrigger = null;
+                    }, 200);
+                });
+            }
         });
 
-        tooltip.addEventListener('mouseleave', function() {
-            // Hide immediately when leaving tooltip
-            tooltip.classList.remove('visible');
+        // Desktop hover handlers for tooltip
+        if (!isTouchDevice) {
+            tooltip.addEventListener('mouseenter', function() {
+                // Clear hide timeout when entering tooltip
+                if (hideTimeout) {
+                    clearTimeout(hideTimeout);
+                    hideTimeout = null;
+                }
+                this.classList.add('visible');
+            });
+
+            tooltip.addEventListener('mouseleave', function() {
+                // Hide immediately when leaving tooltip
+                tooltip.classList.remove('visible');
+                currentTrigger = null;
+            });
+        }
+
+        // Close tooltip when clicking outside on mobile/touch devices
+        document.addEventListener('click', function(e) {
+            if (tooltip.classList.contains('visible') && 
+                !tooltip.contains(e.target) && 
+                !Array.from(triggers).some(t => t.contains(e.target))) {
+                tooltip.classList.remove('visible');
+                currentTrigger = null;
+            }
         });
 
         // Avatar animation

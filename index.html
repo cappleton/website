@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Website of Chris Appleton</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            animation: rainbow 20s ease-in-out infinite;
+            overflow: hidden;
+        }
+
+        @keyframes rainbow {
+            0% {
+                background-color: #FFE5E5; /* Pale Red */
+            }
+            14.28% {
+                background-color: #FFF0E5; /* Pale Orange */
+            }
+            28.56% {
+                background-color: #FFFFE5; /* Pale Yellow */
+            }
+            42.84% {
+                background-color: #E5FFE5; /* Pale Green */
+            }
+            57.12% {
+                background-color: #E5E5FF; /* Pale Blue */
+            }
+            71.4% {
+                background-color: #EBE5F0; /* Pale Indigo */
+            }
+            85.68% {
+                background-color: #F5E5FF; /* Pale Violet */
+            }
+            100% {
+                background-color: #FFE5E5; /* Back to Pale Red */
+            }
+        }
+
+        .avatar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: none;
+            will-change: transform;
+            overflow: hidden;
+            background-image: url('avatar.png');
+            background-size: cover;
+            background-position: center;
+            background-color: #667eea;
+            z-index: 10;
+        }
+
+        .content {
+            max-width: 1200px;
+            width: 90%;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            line-height: 1.4;
+            color: #333;
+            font-weight: 400;
+            margin: 0;
+            font-family: Inter, sans-serif;
+        }
+
+        h1 strong {
+            font-weight: 600;
+        }
+
+        .font-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .font-selector select {
+            padding: 10px 35px 10px 15px;
+            font-size: 14px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            cursor: pointer;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+        }
+
+        .font-selector select:hover {
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .font-selector select:focus {
+            border-color: #667eea;
+        }
+
+        .tooltip-trigger {
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-underline-offset: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .name-link {
+            color: inherit;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+        }
+
+        .name-link:hover {
+            text-decoration-style: solid;
+        }
+
+        .tooltip-content {
+            position: fixed;
+            background: white;
+            border: 4px solid;
+            border-radius: 16px;
+            padding: 12px;
+            max-width: 280px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px);
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow: hidden;
+            animation: rainbowBorder 20s ease-in-out infinite;
+        }
+
+        @keyframes rainbowBorder {
+            0% {
+                border-color: #CC6B6B; /* Darker Pale Red */
+            }
+            14.28% {
+                border-color: #CC9966; /* Darker Pale Orange */
+            }
+            28.56% {
+                border-color: #CCCC66; /* Darker Pale Yellow */
+            }
+            42.84% {
+                border-color: #66CC66; /* Darker Pale Green */
+            }
+            57.12% {
+                border-color: #6B6BCC; /* Darker Pale Blue */
+            }
+            71.4% {
+                border-color: #9966AA; /* Darker Pale Indigo */
+            }
+            85.68% {
+                border-color: #B366CC; /* Darker Pale Violet */
+            }
+            100% {
+                border-color: #CC6B6B; /* Back to Darker Pale Red */
+            }
+        }
+
+        .tooltip-content img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .tooltip-content.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .tooltip-content h3 {
+            margin: 0 0 8px 0;
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .tooltip-content p {
+            margin: 0 0 8px 0;
+            color: #555;
+        }
+
+        .tooltip-content .loading {
+            color: #999;
+            font-style: italic;
+        }
+
+        .tooltip-content a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .tooltip-content a:hover {
+            text-decoration: underline;
+        }
+
+        .linkedin-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .linkedin-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 12px;
+            object-fit: cover;
+        }
+
+        .linkedin-card h3 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+        }
+
+        .linkedin-card .role {
+            font-size: 13px;
+            color: #666;
+            margin: 0 0 2px 0;
+        }
+
+        .linkedin-card .location {
+            font-size: 12px;
+            color: #999;
+            margin: 0 0 10px 0;
+        }
+
+        .linkedin-card .social-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .linkedin-card .cta {
+            display: inline-block;
+            padding: 6px 16px;
+            color: #000;
+            border-radius: 16px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .linkedin-card .cta.linkedin {
+            animation: rainbowButtonDark 20s ease-in-out infinite;
+        }
+
+        .linkedin-card .cta.linkedin:hover {
+            filter: brightness(0.85);
+        }
+
+        .linkedin-card .cta.twitter {
+            animation: rainbowButtonLight 20s ease-in-out infinite;
+        }
+
+        .linkedin-card .cta.twitter:hover {
+            filter: brightness(0.85);
+        }
+
+        @keyframes rainbowButtonDark {
+            0% {
+                background-color: #CC6B6B; /* Darker Pale Red */
+            }
+            14.28% {
+                background-color: #CC9966; /* Darker Pale Orange */
+            }
+            28.56% {
+                background-color: #CCCC66; /* Darker Pale Yellow */
+            }
+            42.84% {
+                background-color: #66CC66; /* Darker Pale Green */
+            }
+            57.12% {
+                background-color: #6B6BCC; /* Darker Pale Blue */
+            }
+            71.4% {
+                background-color: #9966AA; /* Darker Pale Indigo */
+            }
+            85.68% {
+                background-color: #B366CC; /* Darker Pale Violet */
+            }
+            100% {
+                background-color: #CC6B6B; /* Back to Darker Pale Red */
+            }
+        }
+
+        @keyframes rainbowButtonLight {
+            0% {
+                background-color: #FFB3B3; /* Lighter Red */
+            }
+            14.28% {
+                background-color: #FFCCB3; /* Lighter Orange */
+            }
+            28.56% {
+                background-color: #FFFFB3; /* Lighter Yellow */
+            }
+            42.84% {
+                background-color: #B3FFB3; /* Lighter Green */
+            }
+            57.12% {
+                background-color: #B3B3FF; /* Lighter Blue */
+            }
+            71.4% {
+                background-color: #CCB3DD; /* Lighter Indigo */
+            }
+            85.68% {
+                background-color: #E6B3FF; /* Lighter Violet */
+            }
+            100% {
+                background-color: #FFB3B3; /* Back to Lighter Red */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="avatar" id="avatar"></div>
+
+    <div class="font-selector">
+        <select id="fontSelect">
+            <option value="'Times New Roman', Times, serif">Times New Roman</option>
+            <option value="Garamond, serif">Garamond</option>
+            <option value="Baskerville, serif">Baskerville</option>
+            <option value="Helvetica, sans-serif">Helvetica</option>
+            <option value="Arial, sans-serif">Arial</option>
+            <option value="Copperplate, fantasy">Copperplate</option>
+            <option value="'Courier New', Courier, monospace">Monospace</option>
+            <option value="Inter, sans-serif" selected>Inter</option>
+            <option value="'Comic Sans MS', cursive">Comic Sans</option>
+            <option value="Impact, fantasy">Impact</option>
+            <option value="Papyrus, fantasy">Papyrus</option>
+            <option value="'Brush Script MT', cursive">Brush Script</option>
+        </select>
+    </div>
+
+    <div class="content">
+        <h1 id="mainText"><strong><a href="https://www.linkedin.com/in/chappleton/" target="_blank" class="tooltip-trigger name-link" data-custom="linkedin">Chris Appleton</a></strong> wields the powers of <span class="tooltip-trigger" data-wiki="Graphic_design">graphic design</span>, <span class="tooltip-trigger" data-wiki="Computer">computers</span>, and the <span class="tooltip-trigger" data-wiki="Internet">internet</span> to turn complex ideas, into clear, beautiful things. Currently designing at <span class="tooltip-trigger" data-wiki="Shopify">Shopify</span> and living among the lakes and forests of <span class="tooltip-trigger" data-wiki="Haliburton,_Ontario">Haliburton, Ontario</span>.</h1>
+    </div>
+
+    <div class="tooltip-content" id="tooltip"></div>
+
+    <script>
+        // Font selector functionality
+        const fontSelect = document.getElementById('fontSelect');
+        const mainText = document.getElementById('mainText');
+        
+        fontSelect.addEventListener('change', function() {
+            mainText.style.fontFamily = this.value;
+        });
+
+        // Tooltip functionality
+        const tooltip = document.getElementById('tooltip');
+        const triggers = document.querySelectorAll('.tooltip-trigger');
+        let currentRequest = null;
+        let hideTimeout = null;
+
+        async function fetchWikipediaContent(title) {
+            const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                return {
+                    title: data.title,
+                    extract: data.extract,
+                    url: data.content_urls.desktop.page,
+                    thumbnail: data.thumbnail ? data.thumbnail.source : null
+                };
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function positionTooltip(tooltip, triggerRect) {
+            const tooltipWidth = 280;
+            const tooltipRect = tooltip.getBoundingClientRect();
+            const tooltipHeight = tooltipRect.height;
+            
+            let left = triggerRect.left;
+            let top = triggerRect.bottom + 15;
+            let positionedAbove = false;
+            
+            // Check right edge
+            if (left + tooltipWidth > window.innerWidth) {
+                left = window.innerWidth - tooltipWidth - 20;
+            }
+            
+            // Check left edge
+            if (left < 20) {
+                left = 20;
+            }
+            
+            // Check bottom edge - position above if needed
+            if (top + tooltipHeight > window.innerHeight - 20) {
+                top = triggerRect.top - tooltipHeight - 20;
+                positionedAbove = true;
+            }
+            
+            // Check top edge
+            if (top < 20) {
+                top = 20;
+            }
+            
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+            
+            return positionedAbove;
+        }
+
+        triggers.forEach(trigger => {
+            trigger.addEventListener('mouseenter', async function(e) {
+                // Clear any pending hide timeout
+                if (hideTimeout) {
+                    clearTimeout(hideTimeout);
+                    hideTimeout = null;
+                }
+                
+                const customType = this.getAttribute('data-custom');
+                const rect = this.getBoundingClientRect();
+                
+                // Check if this is a custom tooltip
+                if (customType === 'linkedin') {
+                    tooltip.innerHTML = `
+                        <div class="linkedin-card">
+                            <img src="avatar.png" alt="Chris Appleton">
+                            <h3>Chris Appleton</h3>
+                            <p class="role">Senior Product Designer at Shopify</p>
+                            <div class="social-buttons">
+                                <a href="https://www.linkedin.com/in/chappleton/" target="_blank" class="cta linkedin">LinkedIn</a>
+                                <a href="https://twitter.com/chris_appleton" target="_blank" class="cta twitter">Twitter</a>
+                            </div>
+                        </div>
+                    `;
+                    tooltip.classList.add('visible');
+                    positionTooltip(tooltip, rect);
+                    return;
+                }
+                
+                const wikiTitle = this.getAttribute('data-wiki');
+                
+                // Show loading state first
+                tooltip.innerHTML = '<p class="loading">Loading...</p>';
+                tooltip.classList.add('visible');
+                
+                // Initial positioning
+                positionTooltip(tooltip, rect);
+                
+                // Fetch content
+                const content = await fetchWikipediaContent(wikiTitle);
+                
+                if (content) {
+                    const imageHtml = content.thumbnail ? `<img src="${content.thumbnail}" alt="${content.title}">` : '';
+                    tooltip.innerHTML = `
+                        ${imageHtml}
+                        <h3>${content.title}</h3>
+                        <p>${content.extract}</p>
+                        <a href="${content.url}" target="_blank">Read more on Wikipedia →</a>
+                    `;
+                    
+                    // Reposition after content loads (when we know the real height)
+                    setTimeout(() => {
+                        positionTooltip(tooltip, rect);
+                    }, 10);
+                } else {
+                    tooltip.innerHTML = '<p>Could not load content.</p>';
+                }
+            });
+
+            trigger.addEventListener('mouseleave', function() {
+                // Delay hiding to allow moving to tooltip
+                hideTimeout = setTimeout(() => {
+                    tooltip.classList.remove('visible');
+                }, 200);
+            });
+        });
+
+        tooltip.addEventListener('mouseenter', function() {
+            // Clear hide timeout when entering tooltip
+            if (hideTimeout) {
+                clearTimeout(hideTimeout);
+                hideTimeout = null;
+            }
+            this.classList.add('visible');
+        });
+
+        tooltip.addEventListener('mouseleave', function() {
+            // Hide immediately when leaving tooltip
+            tooltip.classList.remove('visible');
+        });
+
+        // Avatar animation
+        const avatar = document.getElementById('avatar');
+        const avatarSize = 80;
+        
+        // Avatar properties
+        let x = Math.random() * (window.innerWidth - avatarSize);
+        let y = Math.random() * (window.innerHeight - avatarSize);
+        let velocityX = 4;
+        let velocityY = 4;
+        let rotation = 0;
+        
+        // Get current viewport dimensions
+        function getViewportDimensions() {
+            return {
+                width: window.innerWidth,
+                height: window.innerHeight
+            };
+        }
+        
+        // Update position and handle bouncing
+        function animate() {
+            const viewport = getViewportDimensions();
+            
+            // Update position
+            x += velocityX;
+            y += velocityY;
+            
+            // Check for collisions with edges and bounce
+            if (x <= 0) {
+                x = 0;
+                velocityX = Math.abs(velocityX);
+            } else if (x >= viewport.width - avatarSize) {
+                x = viewport.width - avatarSize;
+                velocityX = -Math.abs(velocityX);
+            }
+            
+            if (y <= 0) {
+                y = 0;
+                velocityY = Math.abs(velocityY);
+            } else if (y >= viewport.height - avatarSize) {
+                y = viewport.height - avatarSize;
+                velocityY = -Math.abs(velocityY);
+            }
+            
+            // Update rotation (slow spin)
+            rotation += 0.5;
+            
+            // Apply transformations
+            avatar.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const viewport = getViewportDimensions();
+            // Keep avatar within new boundaries
+            if (x > viewport.width - avatarSize) {
+                x = viewport.width - avatarSize;
+            }
+            if (y > viewport.height - avatarSize) {
+                y = viewport.height - avatarSize;
+            }
+        });
+        
+        // Start animation
+        animate();
+    </script>
+</body>
+</html>
